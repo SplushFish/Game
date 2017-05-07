@@ -48,6 +48,7 @@ public class TestClass {
     public void run() {
         init();
         loop();
+        System.out.println("test");
 
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window);
