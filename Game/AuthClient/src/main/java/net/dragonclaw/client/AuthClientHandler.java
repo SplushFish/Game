@@ -1,5 +1,7 @@
 package net.dragonclaw.client;
 
+import javax.swing.JOptionPane;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -35,40 +37,48 @@ public class AuthClientHandler extends SimpleChannelInboundHandler<String> {
                     } else {
                         if (parts[1].equals("LOGIN")) {
                             if (parts[2].equals("SUCCES")) {
-                                System.out.println("succesfully logged in!"); // TODO
+                                JOptionPane.showMessageDialog(null, "Succesfully logged in!", "Login Request",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                                client.profile = new UserProfileInternal(parts[3].split("\\|"));
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {
                                     System.err.println("invalid message! length smaller then 4");
                                     return;
                                 } else {
-                                    System.out.println("could not log in!: " + parts[3]); // TODO
+                                    JOptionPane.showMessageDialog(null, "could not login: " + parts[3], "Login Request",
+                                            JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
                             }
                         } else if (parts[1].equals("REGISTER")) {
                             if (parts[2].equals("SUCCES")) {
-                                System.out.println("succesfully registered!"); // TODO
+                                JOptionPane.showMessageDialog(null, "Succesfully registered!", "Register Request",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                                client.profile = new UserProfileInternal(parts[3].split("\\|"));
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {
                                     System.err.println("invalid message! length smaller then 4");
                                     return;
                                 } else {
-                                    System.out.println("could not register!: " + parts[3]); // TODO
+                                    JOptionPane.showMessageDialog(null, "could not register: " + parts[3],
+                                            "Register Request", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
                             }
                         } else if (parts[1].equals("LOGOUT")) {
                             if (parts[2].equals("SUCCES")) {
-                                System.out.println("succesfully loggged out!"); // TODO
+                                JOptionPane.showMessageDialog(null, "Succesfully logged out!", "Register Request",
+                                        JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {
                                     System.err.println("invalid message! length smaller then 4");
                                     return;
                                 } else {
-                                    System.out.println("could not logout!: " + parts[3]); // TODO
+                                    JOptionPane.showMessageDialog(null, "could not logout: " + parts[3],
+                                            "Logout Request", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
                             }

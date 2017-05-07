@@ -64,13 +64,16 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
             return;
         }
 
-        SQLResult result = db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username), new SQLGetter("password", pass));
+        SQLResult result = db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username),
+                new SQLGetter("password", pass));
         if (result.isSuccesSingleton()) {
             UserProfile prof = (UserProfile) result.asDataType();
             prof.lastLogin = ZonedDateTime.now(ZoneOffset.UTC).toString();
             db.updateTable("users", prof);
-            send(ctx, "RESPONSE#LOGIN#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|" + prof.emailAdress + "|" + prof.creationDate + "|"
-                    + prof.lastLogin + "|" + prof.newAccount);
+            send(ctx,
+                    "RESPONSE#LOGIN#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
+                            + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.lastLogout
+                            + "|" + prof.newAccount);
         } else {
             if (result.isError() && result.getResultMessage().equals("19")) {
                 send(ctx, "RESPONSE#LOGIN#DENIED#wrong username or password!");
@@ -111,8 +114,11 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
         UserProfile prof = new UserProfile(username, pass, email);
         SQLResult result = db.insertIntoTable("users", prof);
         if (result.isSucces()) {
-            send(ctx, "RESPONSE#REGISTER#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|" + prof.emailAdress + "|" + prof.creationDate + "|"
-                    + prof.lastLogin + "|" + prof.newAccount);
+            prof = (UserProfile) db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username)).asDataType();
+            send(ctx,
+                    "RESPONSE#REGISTER#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
+                            + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.lastLogout
+                            + "|" + prof.newAccount);
         } else {
             if (result.isError() && result.getResultMessage().equals("19")) {
                 send(ctx, "RESPONSE#REGISTER#DENIED#user already exists!");

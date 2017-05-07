@@ -21,6 +21,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.FingerprintTrustManagerFactory;
+import net.dragonclaw.ui.AuthUI;
 
 public class AuthClient {
 
@@ -30,15 +31,18 @@ public class AuthClient {
     private EventLoopGroup group;
     private Bootstrap client;
     private Channel channel;
+    protected UserProfileInternal profile = null;
     private boolean isOpen = false;
 
     public AuthClient() {
         try {
-            sslCtx = SslContextBuilder.forClient()
-                    .trustManager(new FingerprintTrustManagerFactory("77:d3:de:a2:d6:50:10:3d:ea:35:4d:ce:d1:eb:4f:b9:05:2d:40:2f")).build();
+            sslCtx = SslContextBuilder.forClient().trustManager(
+                    new FingerprintTrustManagerFactory("77:d3:de:a2:d6:50:10:3d:ea:35:4d:ce:d1:eb:4f:b9:05:2d:40:2f"))
+                    .build();
             group = new NioEventLoopGroup();
             client = new Bootstrap();
             client.group(group).channel(NioSocketChannel.class).handler(new ClientInitializer(sslCtx));
+            new AuthUI(this);
         } catch (SSLException e) {
             e.printStackTrace();
         }
@@ -74,6 +78,14 @@ public class AuthClient {
             return;
         }
         System.out.println("The AuthClient is closed!");
+    }
+
+    public UserProfileInternal getLoginInfo() {
+        return profile;
+    }
+
+    public boolean isDone() {
+        return profile != null;
     }
 
     public void close() throws InterruptedException {
