@@ -63,6 +63,8 @@ Thumbs.db
 .gradle
 .idea
 .project
+.metadata
+.recommenders
 .settings
 .checkstyle
 .factorypath
@@ -76,4 +78,6 @@ nb-configuration.xml
 *.ipr
 *.iws
 /.apt_generated/
+/.metadata/
+/.recommenders/
 *.launch
