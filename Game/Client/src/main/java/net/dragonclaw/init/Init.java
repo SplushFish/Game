@@ -1,7 +1,5 @@
 package net.dragonclaw.init;
 
-import java.util.Arrays;
-
 import net.dragonclaw.client.AuthClient;
 import net.dragonclaw.user.UserProfile;
 
