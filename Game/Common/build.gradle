@@ -1,0 +1,50 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+
+sourceCompatibility = 1.8
+version = "1.0"
+
+ext {
+	name = "Common"
+	nettyVersion = "4.1.10.Final"
+	lwjglVersion = "3.0.0"
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs "repos"
+       }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { 
+    	url "https://oss.sonatype.org/content/repositories/snapshots/" 
+    }
+}
+
+dependencies {
+    compile "io.netty:netty-all:${nettyVersion}"
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
+	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
+	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+}
+
+sourceSets {
+	main.java.srcDir "src/main/java"
+	test.java.srcDir "src/test/java"
+}
+
+jar {
+	from configurations.compile.collect {
+		zipTree it
+	}
+    manifest {
+        attributes "Implementation-Title": name,
+                   "Implementation-Version": version,
+                   "Main-Class": mainClass
+    }
+}

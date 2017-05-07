@@ -1,0 +1,60 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+
+sourceCompatibility = 1.8
+version = "1.0"
+
+ext {
+	name = "AuthServer"
+	mainClass = "net.dragonclaw.Main"
+	nettyVersion = "4.1.10.Final"
+	sqliteVersion = "3.16.1"
+	javaxMailVersion = "1.5.0-b01"
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs "repos"
+       }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { 
+    	url "https://oss.sonatype.org/content/repositories/snapshots/" 
+    }
+}
+
+dependencies {
+    compile "io.netty:netty-all:${nettyVersion}"
+    compile "org.xerial:sqlite-jdbc:${sqliteVersion}"
+    compile "javax.mail:mail:${javaxMailVersion}"
+}
+
+sourceSets {
+	main.java.srcDir "src/main/java"
+	test.java.srcDir "src/test/java"
+}
+
+jar {
+	from configurations.compile.collect {
+		zipTree it
+	}
+    manifest {
+        attributes "Implementation-Title": name,
+                   "Implementation-Version": version,
+                   "Main-Class": mainClass
+    }
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+	main mainClass
+	classpath sourceSets.main.runtimeClasspath
+}
+
+task runJar(type: Exec, dependsOn: [jar, build]) {
+	executable 'java'
+	args '-jar', "$jar.archivePath"
+}
