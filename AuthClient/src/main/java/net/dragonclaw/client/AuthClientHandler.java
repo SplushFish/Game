@@ -71,24 +71,6 @@ public class AuthClientHandler extends SimpleChannelInboundHandler<String> {
                                     return;
                                 }
                             }
-                        } else if (parts[1].equals("LOGOUT")) {
-                            if (parts[2].equals("SUCCES")) {
-                                JOptionPane.showMessageDialog(null, "Succesfully logged out!", "Register Request",
-                                        JOptionPane.INFORMATION_MESSAGE);
-                                synchronized (client) {
-                                    client.logout = true;
-                                }
-                                return;
-                            } else if (parts[2].equals("DENIED")) {
-                                if (parts.length < 4) {
-                                    System.err.println("invalid message! length smaller then 4");
-                                    return;
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "could not logout: " + parts[3],
-                                            "Logout Request", JOptionPane.ERROR_MESSAGE);
-                                    return;
-                                }
-                            }
                         }
                     }
                 }

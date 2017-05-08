@@ -22,8 +22,6 @@ public class UserProfile extends SQLDataType {
     @SQLField(dataType = "TEXT", notNull = true)
     public String lastLogin;
     @SQLField(dataType = "TEXT", notNull = true)
-    public String lastLogout;
-    @SQLField(dataType = "TEXT", notNull = true)
     public String creationDate;
     @SQLField(dataType = "BOOLEAN", notNull = true)
     public Boolean newAccount;
@@ -37,7 +35,6 @@ public class UserProfile extends SQLDataType {
         this.uuid = UUID.randomUUID().toString();
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         this.lastLogin = now.toString();
-        this.lastLogout = now.toString();
         this.creationDate = now.toString();
         this.newAccount = true;
     }

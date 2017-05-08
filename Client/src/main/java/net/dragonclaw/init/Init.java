@@ -12,13 +12,7 @@ public final class Init {
         client.open();
         client.waitForLogin();
         client.close();
-        GameClient game = new GameClient(new UserProfile(client.getLoginInfo().asInfo()));
-        client = new AuthClient();
-        client.open();
-        client.sendLogoutRequest(game.user.getAccountName());
-        client.waitForLogout();
-        client.close();
-
+        new GameClient(new UserProfile(client.getLoginInfo().asInfo()));
     }
 
 }

@@ -70,8 +70,8 @@ public class AuthServer {
             EventLoopGroup workerGroup = new NioEventLoopGroup();
             try {
                 ServerBootstrap b = new ServerBootstrap();
-                b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.DEBUG))
-                        .childHandler(new ServerInitializer(sslCtx));
+                b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                        .handler(new LoggingHandler(LogLevel.DEBUG)).childHandler(new ServerInitializer(sslCtx));
 
                 System.out.println("Started Auth Server");
                 b.bind(PORT).sync().channel().closeFuture().sync();
@@ -92,7 +92,8 @@ public class AuthServer {
         try {
             encodedBuf = Base64.encode(wrappedBuf, true);
             try {
-                certText = "-----BEGIN CERTIFICATE-----\n" + encodedBuf.toString(CharsetUtil.US_ASCII) + "\n-----END CERTIFICATE-----\n";
+                certText = "-----BEGIN CERTIFICATE-----\n" + encodedBuf.toString(CharsetUtil.US_ASCII)
+                        + "\n-----END CERTIFICATE-----\n";
             } finally {
                 encodedBuf.release();
             }
@@ -120,7 +121,8 @@ public class AuthServer {
         try {
             encodedBuf = Base64.encode(wrappedBuf, true);
             try {
-                keyText = "-----BEGIN PRIVATE KEY-----\n" + encodedBuf.toString(CharsetUtil.US_ASCII) + "\n-----END PRIVATE KEY-----\n";
+                keyText = "-----BEGIN PRIVATE KEY-----\n" + encodedBuf.toString(CharsetUtil.US_ASCII)
+                        + "\n-----END PRIVATE KEY-----\n";
             } finally {
                 encodedBuf.release();
             }

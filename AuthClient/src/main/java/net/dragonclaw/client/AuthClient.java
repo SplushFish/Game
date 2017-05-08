@@ -33,7 +33,6 @@ public class AuthClient {
     private Channel channel;
     protected UserProfileInternal profile = null;
     private AuthUI ui;
-    protected boolean logout = false;
     private boolean isOpen = false;
 
     public AuthClient() {
@@ -67,17 +66,8 @@ public class AuthClient {
     }
 
     public void sendRegisterRequest(String username, String password, String email) {
-        password = encryptPassword(password);
         if (isOpen) {
             channel.writeAndFlush("REGISTER#" + username + "#" + password + "#" + email + "\r\n");
-            return;
-        }
-        System.out.println("The AuthClient is closed!");
-    }
-
-    public void sendLogoutRequest(String username) {
-        if (isOpen) {
-            channel.writeAndFlush("LOGOUT#" + username + "\r\n");
             return;
         }
         System.out.println("The AuthClient is closed!");
@@ -91,16 +81,6 @@ public class AuthClient {
         while (true) {
             synchronized (client) {
                 if (profile != null) {
-                    return;
-                }
-            }
-        }
-    }
-
-    public void waitForLogout() {
-        while (true) {
-            synchronized (client) {
-                if (logout) {
                     return;
                 }
             }

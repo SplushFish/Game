@@ -9,7 +9,6 @@ public class UserProfile {
     private String emailAdress;
     private String uuid;
     private ZonedDateTime lastLogin;
-    private ZonedDateTime lastLogout;
     private ZonedDateTime creationDate;
     private boolean newAccount;
 
@@ -20,8 +19,7 @@ public class UserProfile {
         emailAdress = info[3];
         creationDate = ZonedDateTime.parse(info[4]);
         lastLogin = ZonedDateTime.parse(info[5]);
-        lastLogout = ZonedDateTime.parse(info[6]);
-        newAccount = Boolean.parseBoolean(info[7]);
+        newAccount = Boolean.parseBoolean(info[6]);
     }
 
     public int getId() {
@@ -42,10 +40,6 @@ public class UserProfile {
 
     public ZonedDateTime getLastLogin() {
         return lastLogin;
-    }
-
-    public ZonedDateTime getLastLogout() {
-        return lastLogout;
     }
 
     public ZonedDateTime getCreationDate() {

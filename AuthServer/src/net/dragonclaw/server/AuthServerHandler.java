@@ -1,5 +1,8 @@
 package net.dragonclaw.server;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -40,8 +43,6 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
             handleLogin(ctx, request);
         } else if (request[0].equals("REGISTER")) {
             handleRegister(ctx, request);
-        } else if (request[0].equals("LOGOUT")) {
-            handleLogout(ctx, request);
         } else {
             send(ctx, "RESPONSE#INVALID");
         }
@@ -70,10 +71,8 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
             UserProfile prof = (UserProfile) result.asDataType();
             prof.lastLogin = ZonedDateTime.now(ZoneOffset.UTC).toString();
             db.updateTable("users", prof);
-            send(ctx,
-                    "RESPONSE#LOGIN#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
-                            + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.lastLogout
-                            + "|" + prof.newAccount);
+            send(ctx, "RESPONSE#LOGIN#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
+                    + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.newAccount);
         } else {
             if (result.isError() && result.getResultMessage().equals("19")) {
                 send(ctx, "RESPONSE#LOGIN#DENIED#wrong username or password!");
@@ -92,14 +91,21 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
         }
         String username = request[1];
         String pass = request[2];
+        if (!pass.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$")) {
+            send(ctx,
+                    "RESPONSE#REGISTER#DENIED#invalid password! \n password requires atleast 8 characters, a lowercase, an uppercase and a digit!");
+            return;
+        }
+        String encrypted = encryptPassword(pass);
         String email = request[3];
-        if (!pass.matches("^[a-f0-9]{32}$")) {
+        if (!encrypted.matches("^[a-f0-9]{32}$")) {
             send(ctx, "RESPONSE#REGISTER#DENIED#invalid password! Contact server owners!");
             return;
         }
 
         if (!username.matches("^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$")) {
-            send(ctx, "RESPONSE#REGISTER#DENIED#invalid username!");
+            send(ctx,
+                    "RESPONSE#REGISTER#DENIED#invalid username! \n username requires between 6 and 20 characters and no special characters!");
             return;
         }
 
@@ -111,14 +117,13 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
             return;
         }
 
-        UserProfile prof = new UserProfile(username, pass, email);
+        UserProfile prof = new UserProfile(username, encrypted, email);
         SQLResult result = db.insertIntoTable("users", prof);
         if (result.isSucces()) {
-            prof = (UserProfile) db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username)).asDataType();
-            send(ctx,
-                    "RESPONSE#REGISTER#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
-                            + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.lastLogout
-                            + "|" + prof.newAccount);
+            prof = (UserProfile) db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username))
+                    .asDataType();
+            send(ctx, "RESPONSE#REGISTER#SUCCES#" + prof.id + "|" + prof.accountName + "|" + prof.uuid + "|"
+                    + prof.emailAdress + "|" + prof.creationDate + "|" + prof.lastLogin + "|" + prof.newAccount);
         } else {
             if (result.isError() && result.getResultMessage().equals("19")) {
                 send(ctx, "RESPONSE#REGISTER#DENIED#user already exists!");
@@ -129,34 +134,18 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
         }
     }
 
-    private void handleLogout(ChannelHandlerContext ctx, String[] request) {
-        if (request.length != 2) {
-            send(ctx, "RESPONSE#INVALID");
-            return;
+    private String encryptPassword(String password) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return "ERROR";
         }
-        String username = request[1];
-        if (!username.matches("^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$")) {
-            send(ctx, "RESPONSE#LOGOUT#DENIED#wrong username!");
-            return;
-        }
-
-        SQLResult result = db.getFromTable("users", UserProfile.class, new SQLGetter("accountName", username));
-        if (result.isSuccesSingleton()) {
-            UserProfile prof = (UserProfile) result.asDataType();
-            prof.lastLogout = ZonedDateTime.now(ZoneOffset.UTC).toString();
-            db.updateTable("users", prof);
-            send(ctx, "RESPONSE#LOGOUT#SUCCES");
-        } else {
-            if (result.isError() && result.getResultMessage().equals("19")) {
-                send(ctx, "RESPONSE#LOGOUT#DENIED#cannot logout wrong username!");
-            } else {
-                send(ctx, "RESPONSE#LOGOUT#DENIED#invalid request! contact server owners!");
-                System.err.println("Logout error: " + result.getResultMessage());
-            }
-        }
+        byte[] hash = md.digest(password.getBytes());
+        BigInteger bi = new BigInteger(1, hash);
+        return String.format("%0" + (hash.length << 1) + "x", bi);
     }
-
-
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
