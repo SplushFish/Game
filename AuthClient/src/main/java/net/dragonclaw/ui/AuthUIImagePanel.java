@@ -2,8 +2,8 @@ package net.dragonclaw.ui;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -15,8 +15,10 @@ public class AuthUIImagePanel extends JPanel {
 
     public AuthUIImagePanel(String image) {
         try {
-            bgImage = ImageIO.read(new File(image));
-            header = ImageIO.read(new File("images/header.png"));
+            InputStream in = getClass().getClassLoader().getResourceAsStream(image);
+            bgImage = ImageIO.read(in);
+            in = getClass().getClassLoader().getResourceAsStream("images/header.png");
+            header = ImageIO.read(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
