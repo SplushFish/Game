@@ -6,7 +6,7 @@ version = "1.0"
 
 ext {
 	name = "Client"
-	mainClass = "TestClass"
+	mainClass = "net.dragonclaw.init.Init"
 	nettyVersion = "4.1.10.Final"
 	lwjglVersion = "3.0.0"
 }

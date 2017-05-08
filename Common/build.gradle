@@ -7,7 +7,6 @@ version = "1.0"
 ext {
 	name = "Common"
 	nettyVersion = "4.1.10.Final"
-	lwjglVersion = "3.0.0"
 }
 
 uploadArchives {
@@ -27,10 +26,6 @@ repositories {
 
 dependencies {
     compile "io.netty:netty-all:${nettyVersion}"
-    compile "org.lwjgl:lwjgl:${lwjglVersion}"
-	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
-	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
-	compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
 }
 
 sourceSets {
@@ -44,7 +39,6 @@ jar {
 	}
     manifest {
         attributes "Implementation-Title": name,
-                   "Implementation-Version": version,
-                   "Main-Class": mainClass
+                   "Implementation-Version": version
     }
 }

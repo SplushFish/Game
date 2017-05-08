@@ -1,12 +1,9 @@
 package net.dragonclaw.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,15 +17,14 @@ import net.dragonclaw.client.AuthClient;
 public class AuthUIPanel extends JPanel {
 
     private final AuthClient client;
-    private Image bgImage;
-    private JPanel mainPanel = new JPanel();
-    private JPanel registerPanel = new JPanel();
-    private JPanel loginPanel = new JPanel();
+    private AuthUIImagePanel mainPanel = new AuthUIImagePanel("images/background.png");
+    private AuthUIImagePanel registerPanel = new AuthUIImagePanel("images/background.png");
+    private AuthUIImagePanel loginPanel = new AuthUIImagePanel("images/background.png");
+    private JLabel header;
 
     public AuthUIPanel(AuthClient client) {
         super(new BorderLayout());
         this.client = client;
-        bgImage = Toolkit.getDefaultToolkit().createImage(new byte[] {0, 0, 0});
         setupUI();
         setupLoginPanel();
         setupRegisterPanel();
@@ -69,14 +65,14 @@ public class AuthUIPanel extends JPanel {
         JTextField username = new JTextField();
         JPasswordField pass = new JPasswordField();
         login.addActionListener(e -> {
-                client.sendLoginRequest(username.getText(), new String(pass.getPassword()));
+            client.sendLoginRequest(username.getText(), new String(pass.getPassword()));
         });
         c.gridx = 0;
         c.gridy = 0;
         c.ipadx = 150;
         c.ipady = 5;
         c.insets = new Insets(0, 0, 10, 0);
-        loginPanel.add(new JLabel("username: "), c);
+        loginPanel.add(new JLabel("<html><font color='red'>username: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 0;
         c.ipadx = 300;
@@ -84,7 +80,7 @@ public class AuthUIPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 1;
         c.ipadx = 150;
-        loginPanel.add(new JLabel("password: "), c);
+        loginPanel.add(new JLabel("<html><font color='red'>password: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 1;
         c.ipadx = 300;
@@ -125,7 +121,7 @@ public class AuthUIPanel extends JPanel {
         c.ipadx = 150;
         c.ipady = 5;
         c.insets = new Insets(0, 0, 10, 0);
-        registerPanel.add(new JLabel("username: "), c);
+        registerPanel.add(new JLabel("<html><font color='red'>username: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 0;
         c.ipadx = 300;
@@ -133,7 +129,7 @@ public class AuthUIPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 1;
         c.ipadx = 150;
-        registerPanel.add(new JLabel("email: "), c);
+        registerPanel.add(new JLabel("<html><font color='red'>email: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 1;
         c.ipadx = 300;
@@ -141,7 +137,7 @@ public class AuthUIPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 2;
         c.ipadx = 150;
-        registerPanel.add(new JLabel("password: "), c);
+        registerPanel.add(new JLabel("<html><font color='red'>password: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 2;
         c.ipadx = 300;
@@ -149,7 +145,7 @@ public class AuthUIPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 3;
         c.ipadx = 150;
-        registerPanel.add(new JLabel("re-password: "), c);
+        registerPanel.add(new JLabel("<html><font color='red'>re-password: </font></html>"), c);
         c.gridx = 1;
         c.gridy = 3;
         c.ipadx = 300;
@@ -169,12 +165,6 @@ public class AuthUIPanel extends JPanel {
         add(panel, layout);
         validate();
         repaint();
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(bgImage, 0, 0, null);
     }
 
 }
