@@ -38,8 +38,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
-import net.dragonclaw.init.LWJGLNativesLoader;
-
 // lwjgl example class
 public class TestClass {
 
