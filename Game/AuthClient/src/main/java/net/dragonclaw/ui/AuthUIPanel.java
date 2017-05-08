@@ -38,7 +38,7 @@ public class AuthUIPanel extends JPanel {
         mainPanel.setLayout(new GridBagLayout());
         JButton login = new JButton("Login");
         login.addActionListener(e -> {
-            swapToScreen(loginPanel, BorderLayout.NORTH);
+            swapToScreen(loginPanel, BorderLayout.CENTER);
         });
         JButton register = new JButton("Register");
         register.addActionListener(e -> {
@@ -61,16 +61,41 @@ public class AuthUIPanel extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         loginPanel.setLayout(new GridBagLayout());
+        JButton login = new JButton("Login");
         JButton back = new JButton("Back");
         back.addActionListener(e -> {
             swapToScreen(mainPanel, BorderLayout.CENTER);
         });
         JTextField username = new JTextField();
         JPasswordField pass = new JPasswordField();
+        login.addActionListener(e -> {
+                client.sendLoginRequest(username.getText(), new String(pass.getPassword()));
+        });
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 150;
+        c.ipady = 5;
+        c.insets = new Insets(0, 0, 10, 0);
         loginPanel.add(new JLabel("username: "), c);
+        c.gridx = 1;
+        c.gridy = 0;
+        c.ipadx = 300;
         loginPanel.add(username, c);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.ipadx = 150;
         loginPanel.add(new JLabel("password: "), c);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.ipadx = 300;
         loginPanel.add(pass, c);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.ipadx = 150;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 0);
+        loginPanel.add(login, c);
+        c.gridy = 5;
         loginPanel.add(back, c);
     }
 
@@ -91,7 +116,8 @@ public class AuthUIPanel extends JPanel {
             if (new String(pass.getPassword()).equals(new String(repass.getPassword()))) {
                 client.sendRegisterRequest(username.getText(), new String(pass.getPassword()), email.getText());
             } else {
-                JOptionPane.showMessageDialog(this, "passwords do not match!", "Register Request", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "passwords do not match!", "Register Request",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         c.gridx = 0;

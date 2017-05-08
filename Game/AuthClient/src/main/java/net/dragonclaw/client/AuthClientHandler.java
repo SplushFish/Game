@@ -39,7 +39,9 @@ public class AuthClientHandler extends SimpleChannelInboundHandler<String> {
                             if (parts[2].equals("SUCCES")) {
                                 JOptionPane.showMessageDialog(null, "Succesfully logged in!", "Login Request",
                                         JOptionPane.INFORMATION_MESSAGE);
-                                client.profile = new UserProfileInternal(parts[3].split("\\|"));
+                                synchronized (client) {
+                                    client.profile = new UserProfileInternal(parts[3].split("\\|"));
+                                }
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {
@@ -55,7 +57,9 @@ public class AuthClientHandler extends SimpleChannelInboundHandler<String> {
                             if (parts[2].equals("SUCCES")) {
                                 JOptionPane.showMessageDialog(null, "Succesfully registered!", "Register Request",
                                         JOptionPane.INFORMATION_MESSAGE);
-                                client.profile = new UserProfileInternal(parts[3].split("\\|"));
+                                synchronized (client) {
+                                    client.profile = new UserProfileInternal(parts[3].split("\\|"));
+                                }
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {
@@ -71,6 +75,9 @@ public class AuthClientHandler extends SimpleChannelInboundHandler<String> {
                             if (parts[2].equals("SUCCES")) {
                                 JOptionPane.showMessageDialog(null, "Succesfully logged out!", "Register Request",
                                         JOptionPane.INFORMATION_MESSAGE);
+                                synchronized (client) {
+                                    client.logout = true;
+                                }
                                 return;
                             } else if (parts[2].equals("DENIED")) {
                                 if (parts.length < 4) {

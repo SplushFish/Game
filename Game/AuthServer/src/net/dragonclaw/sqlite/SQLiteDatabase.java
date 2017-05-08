@@ -220,7 +220,7 @@ public class SQLiteDatabase {
 
     private <T extends SQLDataType> SQLResult executeStatement(String sql, int count, Class<T> reference) {
         try {
-            SQLResult result = new SQLResult("");
+            SQLResult result = new SQLResult("19");
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             if (count == 1) {

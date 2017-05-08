@@ -32,6 +32,8 @@ public class AuthClient {
     private Bootstrap client;
     private Channel channel;
     protected UserProfileInternal profile = null;
+    private AuthUI ui;
+    protected boolean logout = false;
     private boolean isOpen = false;
 
     public AuthClient() {
@@ -42,7 +44,7 @@ public class AuthClient {
             group = new NioEventLoopGroup();
             client = new Bootstrap();
             client.group(group).channel(NioSocketChannel.class).handler(new ClientInitializer(sslCtx));
-            new AuthUI(this);
+            ui = new AuthUI(this);
         } catch (SSLException e) {
             e.printStackTrace();
         }
@@ -51,6 +53,7 @@ public class AuthClient {
     public AuthClient open() throws InterruptedException {
         channel = client.connect(HOST, PORT).sync().channel();
         isOpen = true;
+        ui.open();
         return this;
     }
 
@@ -84,14 +87,32 @@ public class AuthClient {
         return profile;
     }
 
-    public boolean isDone() {
-        return profile != null;
+    public void waitForLogin() {
+        while (true) {
+            synchronized (client) {
+                if (profile != null) {
+                    return;
+                }
+            }
+        }
+    }
+
+    public void waitForLogout() {
+        while (true) {
+            synchronized (client) {
+                if (logout) {
+                    return;
+                }
+            }
+        }
     }
 
     public void close() throws InterruptedException {
+        channel.close();
         channel.closeFuture().sync();
         group.shutdownGracefully();
         isOpen = false;
+        ui.close();
     }
 
     private String encryptPassword(String password) {

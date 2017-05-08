@@ -1,7 +1,5 @@
 package net.dragonclaw.client;
 
-import java.util.Arrays;
-
 public class UserProfileInternal {
 
     public int id;
@@ -15,7 +13,7 @@ public class UserProfileInternal {
     private String[] info;
 
     public UserProfileInternal(String[] info) {
-        System.out.println(Arrays.toString(info));
+        this.info = info;
         id = Integer.parseInt(info[0]);
         accountName = info[1];
         uuid = info[2];
