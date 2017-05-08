@@ -40,6 +40,7 @@ import org.lwjgl.system.MemoryStack;
 
 import net.dragonclaw.init.LWJGLNativesLoader;
 
+// lwjgl example class
 public class TestClass {
 
     // The window handle
@@ -130,10 +131,4 @@ public class TestClass {
             glfwPollEvents();
         }
     }
-
-    public static void main(String[] args) {
-        LWJGLNativesLoader.load();
-        new TestClass().run();
-    }
-
 }
