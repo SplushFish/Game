@@ -21,6 +21,10 @@ public class UserProfile {
         lastLogin = ZonedDateTime.parse(info[5]);
         newAccount = Boolean.parseBoolean(info[6]);
     }
+    
+    public UserProfile(){
+        
+    }
 
     public int getId() {
         return id;

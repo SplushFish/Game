@@ -8,8 +8,6 @@ public class KeyboardInput extends GLFWKeyCallback {
 
     private boolean[] keyDown = new boolean[GLFW_KEY_LAST];
 
-    public KeyboardInput() {}
-
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_UNKNOWN) 

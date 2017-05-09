@@ -1,8 +1,8 @@
-package net.dragonclaw.game.input;
+package net.dragonclaw.game.window;
 
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 
-public class WindowFocusInput extends GLFWWindowFocusCallback {
+public class WindowFocusListener extends GLFWWindowFocusCallback {
 
     private boolean focus;
 

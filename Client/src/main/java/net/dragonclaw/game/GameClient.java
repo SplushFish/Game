@@ -1,22 +1,20 @@
 package net.dragonclaw.game;
 
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
-
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import net.dragonclaw.game.input.InputManager;
+import net.dragonclaw.game.window.WindowManager;
 import net.dragonclaw.math.Vector;
+import net.dragonclaw.math.Vector2d;
+import net.dragonclaw.math.Vector2i;
 import net.dragonclaw.user.UserProfile;
 
 public class GameClient {
@@ -24,16 +22,12 @@ public class GameClient {
     /** Instance of the camera. */
     private final Camera camera = new Camera();
 
-    boolean resizable = true;
-    boolean visible = true;
-
-    int width = 1024;
-    int height = 768;
-
     String title = "Game";
 
     private float vDist;
 
+    private final InputManager inputManager;
+    private final WindowManager windowManager;
     private final long window;
     private final UserProfile user;
 
@@ -48,62 +42,50 @@ public class GameClient {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, visible ? GLFW_TRUE : GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+        windowManager = new WindowManager(this, title);
+        window = windowManager.create(800, 600);
 
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
+        inputManager = new InputManager(this, window);
+        inputManager.init();
+        windowManager.init();
 
-        if (window == NULL) {
-            throw new RuntimeException("Failed to create window");
-        }
-
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
-
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
-
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
-        } // the stack frame is popped automatically
-
-        glfwMakeContextCurrent(window);
         GL.createCapabilities();
         glfwSwapInterval(1);
-        glfwShowWindow(window);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        windowManager.setVisable(true);
+        glfwSetCursor(window, glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR));
         while (!glfwWindowShouldClose(window)) {
             loop();
         }
     }
 
     private void loop() {
-        glClearColor(1f, 1f, 1f, 0f);
+        glClearColor(0f, 0f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3f(0f, 0f, 0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glfwSwapBuffers(window);
-        glfwPollEvents();
-        glViewport(0, 0, width, height);
+        inputManager.update();
+        if (inputManager.isButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            Vector2d pos = inputManager.getMousePos();
+            System.out.println("you bloody clicker ... -.-. Trying to click on position: " + pos);
+        }
+        Vector2i size = windowManager.getWindowSize();
+        glViewport(0, 0, size.x(), size.y());
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glPerspective(45, (float) width / (float) height, 0.1f * vDist, 10f * vDist);
+        glPerspective(45, (float) size.x() / (float) size.y(), 0.1f * vDist, 10f * vDist);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         camera.update(0, 0, 10);
         glLookAt(camera.eye, camera.center, camera.up);
+    }
+
+    public WindowManager getWindowManager() {
+        return windowManager;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 
     private static final float[] IDENTITY_MATRIX = new float[] {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -194,11 +176,11 @@ public class GameClient {
      */
     public void drawArrow() {
         // draw the body of the arrow
-        glutSolidCylinder(0.05, 0.75, 5, 1);
+        // glutSolidCylinder(0.05, 0.75, 5, 1);
         // move 3/4 up to draw the arrow at the right position
         glTranslatef(0, 0, 0.75f);
         // draw the arrow head of the arrow
-        glutSolidCone(0.075, 0.25, 5, 1);
+        // glutSolidCone(0.075, 0.25, 5, 1);
     }
 
 }
