@@ -93,7 +93,7 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
         String pass = request[2];
         if (!pass.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$")) {
             send(ctx,
-                    "RESPONSE#REGISTER#DENIED#invalid password! \n password requires atleast 8 characters, a lowercase, an uppercase and a digit!");
+                    "RESPONSE#REGISTER#DENIED#invalid password: password requires atleast 8 characters, a lowercase, an uppercase and a digit!");
             return;
         }
         String encrypted = encryptPassword(pass);
@@ -105,7 +105,7 @@ public class AuthServerHandler extends SimpleChannelInboundHandler<String> {
 
         if (!username.matches("^(?=.{6,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$")) {
             send(ctx,
-                    "RESPONSE#REGISTER#DENIED#invalid username! \n username requires between 6 and 20 characters and no special characters!");
+                    "RESPONSE#REGISTER#DENIED#invalid username: username requires between 6 and 20 characters and no special characters!");
             return;
         }
 

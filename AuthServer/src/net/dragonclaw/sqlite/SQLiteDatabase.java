@@ -17,9 +17,6 @@ public class SQLiteDatabase {
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
-            Statement stmt = c.createStatement();
-            stmt.executeUpdate("DROP TABLE USERS");
-            stmt.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -244,8 +241,8 @@ public class SQLiteDatabase {
             return result;
         } catch (SQLException e) {
             return new SQLResult(e.getErrorCode() + "");
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
             return new SQLResult(e.getMessage());
         }
 
